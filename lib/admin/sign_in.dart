@@ -1,20 +1,20 @@
-import 'package:arunaapp/admin/sign_in.dart';
+import 'package:arunaapp/admin/sign_up.dart';
 import 'package:arunaapp/configure/constants.dart';
 import 'package:arunaapp/menu_user/main_menu.dart';
 import 'package:arunaapp/user/auth_service.dart';
 import 'package:arunaapp/user/reset_password.dart';
-import 'package:arunaapp/user/sign_up.dart';
+import 'package:arunaapp/user/sign_in.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class SignIn extends StatefulWidget {
-  const SignIn({super.key});
+class SignInAdmin extends StatefulWidget {
+  const SignInAdmin({super.key});
 
   @override
-  _SignInState createState() => _SignInState();
+  _SignInAdminState createState() => _SignInAdminState();
 }
 
-class _SignInState extends State<SignIn> {
+class _SignInAdminState extends State<SignInAdmin> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   bool _obscurePassword = true;
@@ -90,7 +90,9 @@ class _SignInState extends State<SignIn> {
                             ),
                           ),
                         ),
+
                         const SizedBox(height: 5.0),
+
                         Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
                           child: TextFormField(
@@ -131,9 +133,6 @@ class _SignInState extends State<SignIn> {
                             Navigator.push(context,
                                 MaterialPageRoute(builder: (BuildContext context) => ResetPassword()));
                           },
-                          style: ButtonStyle(
-                            overlayColor: MaterialStateColor.resolveWith((states) => Colors.transparent),
-                          ),
                           child: Align(
                             alignment: Alignment.centerRight,
                             child: Text('Lupa Kata Sandi', style: TextStyle(color: iconlogin)),
@@ -184,12 +183,9 @@ class _SignInState extends State<SignIn> {
                           onPressed: () {
                             Navigator.push(
                               context,
-                              MaterialPageRoute(builder: (BuildContext context) => SignUp()),
+                              MaterialPageRoute(builder: (BuildContext context) => SignUpAdmin()),
                             );
                           },
-                          style: ButtonStyle(
-                            overlayColor: MaterialStateColor.resolveWith((states) => Colors.transparent),
-                          ),
                           child: Text('Belum Memiliki Akun? Daftar', style: TextStyle(color: textlogin)),
                         ),
 
@@ -198,13 +194,13 @@ class _SignInState extends State<SignIn> {
                           onPressed: () {
                             Navigator.push(
                               context,
-                              MaterialPageRoute(builder: (BuildContext context) => SignInAdmin()),
+                              MaterialPageRoute(builder: (BuildContext context) => SignIn()),
                             );
                           },
                           style: ButtonStyle(
                             overlayColor: MaterialStateColor.resolveWith((states) => Colors.transparent),
                           ),
-                          child: Text('Login sebagai Admin', style: TextStyle(color: textlogin)),
+                          child: Text('Login sebagai User', style: TextStyle(color: textlogin)),
                         ),
                       ],
                     ),

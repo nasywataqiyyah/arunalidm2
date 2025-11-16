@@ -1,22 +1,19 @@
 import 'package:arunaapp/configure/constants.dart';
-import 'package:arunaapp/user/sign_in.dart';
+import 'package:arunaapp/admin/sign_in.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:flutter/scheduler.dart';
 
-FirebaseAuth auth = FirebaseAuth.instance;
-final FirebaseFirestore firestore = FirebaseFirestore.instance;
-
-class SignUp extends StatefulWidget {
-  const SignUp({super.key});
+class SignUpAdmin extends StatefulWidget {
+  const SignUpAdmin({super.key});
 
   @override
-  _SignUpState createState() => _SignUpState();
+  State<SignUpAdmin> createState() => _SignUpAdminState();
 }
 
-class _SignUpState extends State<SignUp> {
+class _SignUpAdminState extends State<SignUpAdmin> {
   bool _passwordVisible1 = false;
   bool _passwordVisible2 = false;
   bool loading = false;
@@ -25,13 +22,9 @@ class _SignUpState extends State<SignUp> {
 
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _usernameController = TextEditingController();
+  final TextEditingController _schoolController = TextEditingController();
   final TextEditingController _userPasswordController1 = TextEditingController();
   final TextEditingController _userPasswordController2 = TextEditingController();
-
-  // TAMBAHAN FIELD
-  final TextEditingController _tanggalLahirController = TextEditingController();
-  final TextEditingController _kelasController = TextEditingController();
-  final TextEditingController _sekolahController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -52,7 +45,32 @@ class _SignUpState extends State<SignUp> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
-                    // EMAIL
+                    inputField(
+                      controller: _usernameController,
+                      label: "Nama Admin",
+                      hint: "Nama Admin",
+                      icon: Icons.badge_outlined,
+                      validator: (value) {
+                        if (value!.isEmpty) {
+                          return "Masukkan nama admin";
+                        }
+                        return null;
+                      },
+                    ),
+
+                    inputField(
+                      controller: _schoolController,
+                      label: "Sekolah",
+                      hint: "Masukkan nama sekolah",
+                      icon: Icons.school_outlined,
+                      validator: (value) {
+                        if (value!.isEmpty) {
+                          return "Masukkan nama sekolah";
+                        }
+                        return null;
+                      },
+                    ),
+
                     inputField(
                       controller: _emailController,
                       label: "Email",
@@ -66,63 +84,6 @@ class _SignUpState extends State<SignUp> {
                       },
                     ),
 
-                    // USERNAME
-                    inputField(
-                      controller: _usernameController,
-                      label: "Nama Pengguna",
-                      hint: "Nama Pengguna",
-                      icon: Icons.account_circle_outlined,
-                      validator: (value) {
-                        if (value!.isEmpty) {
-                          return "Masukkan nama pengguna";
-                        }
-                        return null;
-                      },
-                    ),
-
-                    // TAMBAHAN: TANGGAL LAHIR
-                    inputField(
-                      controller: _tanggalLahirController,
-                      label: "Tanggal Lahir",
-                      hint: "DD/MM/YYYY",
-                      icon: Icons.calendar_month_outlined,
-                      validator: (value) {
-                        if (value!.isEmpty) {
-                          return "Masukkan tanggal lahir";
-                        }
-                        return null;
-                      },
-                    ),
-
-                    // TAMBAHAN: KELAS
-                    inputField(
-                      controller: _kelasController,
-                      label: "Kelas",
-                      hint: "10 / 11 / 12",
-                      icon: Icons.school_outlined,
-                      validator: (value) {
-                        if (value!.isEmpty) {
-                          return "Masukkan kelas";
-                        }
-                        return null;
-                      },
-                    ),
-
-                    // TAMBAHAN: SEKOLAH
-                    inputField(
-                      controller: _sekolahController,
-                      label: "Sekolah",
-                      hint: "Nama Sekolah",
-                      icon: Icons.home_work_outlined,
-                      validator: (value) {
-                        if (value!.isEmpty) {
-                          return "Masukkan nama sekolah";
-                        }
-                        return null;
-                      },
-                    ),
-
-                    // PASSWORD 1
                     passwordField(
                       controller: _userPasswordController1,
                       label: "Kata Sandi",
@@ -140,7 +101,6 @@ class _SignUpState extends State<SignUp> {
                       },
                     ),
 
-                    // PASSWORD 2
                     passwordField(
                       controller: _userPasswordController2,
                       label: "Konfirmasi Kata Sandi",
@@ -160,7 +120,6 @@ class _SignUpState extends State<SignUp> {
 
                     const SizedBox(height: 10),
 
-                    // DAFTAR BUTTON
                     Container(
                       height: 45,
                       width: MediaQuery.of(context).size.width / 2.25,
@@ -168,7 +127,7 @@ class _SignUpState extends State<SignUp> {
                         onPressed: () {
                           if (_formKey.currentState!.validate()) {
                             setState(() => loading = true);
-                            registerNewUser(context);
+                            registerNewAdmin(context);
                           }
                         },
                         style: ButtonStyle(
@@ -191,11 +150,13 @@ class _SignUpState extends State<SignUp> {
 
                     const SizedBox(height: 10),
 
-                    // LOGIN LINK
                     TextButton(
                       onPressed: () {
-                        Navigator.push(context,
-                            MaterialPageRoute(builder: (_) => const SignIn()));
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (_) => const SignInAdmin()),
+                        );
                       },
                       child: Text(
                         'Sudah Punya Akun? Masuk',
@@ -203,7 +164,6 @@ class _SignUpState extends State<SignUp> {
                       ),
                     ),
 
-                    // LOADING INDICATOR
                     Visibility(
                       visible: loading,
                       child: Container(
@@ -211,7 +171,8 @@ class _SignUpState extends State<SignUp> {
                         child: LinearProgressIndicator(
                           minHeight: 3,
                           backgroundColor: Colors.grey[700],
-                          valueColor: const AlwaysStoppedAnimation(Colors.white),
+                          valueColor:
+                          const AlwaysStoppedAnimation(Colors.white),
                         ),
                       ),
                     ),
@@ -225,7 +186,6 @@ class _SignUpState extends State<SignUp> {
     );
   }
 
-  // INPUT FIELD REUSABLE
   Widget inputField({
     required TextEditingController controller,
     required String label,
@@ -259,7 +219,6 @@ class _SignUpState extends State<SignUp> {
     );
   }
 
-  // PASSWORD FIELD REUSABLE
   Widget passwordField({
     required TextEditingController controller,
     required String label,
@@ -298,8 +257,7 @@ class _SignUpState extends State<SignUp> {
     );
   }
 
-  // REGISTER USER
-  Future<void> registerNewUser(BuildContext context) async {
+  Future<void> registerNewAdmin(BuildContext context) async {
     User? currentUser;
 
     try {
@@ -312,23 +270,24 @@ class _SignUpState extends State<SignUp> {
       if (currentUser != null) {
         await currentUser.sendEmailVerification();
 
-        await firestore.collection("users").doc(currentUser.uid).set({
-          'User Name': _usernameController.text.trim(),
+        await FirebaseFirestore.instance
+            .collection("users")
+            .doc(currentUser.uid)
+            .set({
+          'Nama Admin': _usernameController.text.trim(),
+          'Sekolah': _schoolController.text.trim(),
           'Email': _emailController.text.trim(),
-          'Tanggal Lahir': _tanggalLahirController.text.trim(),
-          'Kelas': _kelasController.text.trim(),
-          'Sekolah': _sekolahController.text.trim(),
           'User UID': currentUser.uid,
-          'Role': 'user',
+          'Role': 'Admin',
           'Created_At': DateTime.now(),
         });
 
         SchedulerBinding.instance.addPostFrameCallback((_) {
           Navigator.push(
-              context, MaterialPageRoute(builder: (context) => const SignIn()));
+              context, MaterialPageRoute(builder: (_) => const SignInAdmin()));
         });
 
-        Fluttertoast.showToast(msg: "Akun berhasil dibuat");
+        Fluttertoast.showToast(msg: "Akun Admin berhasil dibuat");
       }
     } catch (e) {
       Fluttertoast.showToast(msg: "Gagal: $e");
@@ -340,11 +299,9 @@ class _SignUpState extends State<SignUp> {
   void dispose() {
     _emailController.dispose();
     _usernameController.dispose();
+    _schoolController.dispose();
     _userPasswordController1.dispose();
     _userPasswordController2.dispose();
-    _tanggalLahirController.dispose();
-    _kelasController.dispose();
-    _sekolahController.dispose();
     super.dispose();
   }
 }

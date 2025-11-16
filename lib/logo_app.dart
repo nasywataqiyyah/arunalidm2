@@ -14,9 +14,7 @@ class _LogoAppState extends State<LogoApp> {
   @override
   void initState() {
     super.initState();
-    // Timer untuk menunggu 3 detik dan kemudian navigasi ke halaman SignIn
     Timer(const Duration(seconds: 3), () {
-      // Mengganti halaman ke SignIn setelah 3 detik
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (context) => SignIn()),
@@ -28,45 +26,27 @@ class _LogoAppState extends State<LogoApp> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: background,
-      body: SafeArea(
+      body: Center(
         child: Column(
+          mainAxisSize: MainAxisSize.min,
           children: [
             Container(
-              width: 250,
+              width: 200,
               height: 200,
               decoration: const BoxDecoration(
                 image: DecorationImage(
-                  image: AssetImage('assets/selamat_datang.png'),
+                  image: AssetImage('assets/aruna_2.png'),
+                  fit: BoxFit.contain,
                 ),
               ),
             ),
-            Expanded(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  Center(
-                    child: Container(
-                      width: 200,
-                      height: 200,
-                      decoration: const BoxDecoration(
-                        image: DecorationImage(
-                          image: AssetImage('assets/logo apk.1.png'),
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            Center(
-              child: Container(
-                width: 180,
-                height: 180,
-                decoration: const BoxDecoration(
-                  image: DecorationImage(
-                    image: AssetImage('assets/teks2.png'),
-                  ),
-                ),
+            const SizedBox(height: 16),
+            const Text(
+              "ARUNA APP",
+              style: TextStyle(
+                fontSize: 28,
+                letterSpacing: 2,
+                color: Colors.black87,
               ),
             ),
           ],
@@ -75,5 +55,3 @@ class _LogoAppState extends State<LogoApp> {
     );
   }
 }
-
-
