@@ -4,6 +4,8 @@ import 'package:arunaapp/configure/constants.dart';
 import 'package:arunaapp/user/auth_service.dart';
 import 'package:arunaapp/user/reset_password.dart';
 import 'package:arunaapp/user/sign_in.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -66,6 +68,7 @@ class _SignInAdminState extends State<SignInAdmin> {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[
+                        // EMAIL
                         Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
                           child: TextFormField(
@@ -81,18 +84,15 @@ class _SignInAdminState extends State<SignInAdmin> {
                                 borderSide: BorderSide(color: colorlogin),
                                 borderRadius: BorderRadius.all(Radius.circular(15.0)),
                               ),
-                              focusedBorder: OutlineInputBorder(
-                                borderSide: BorderSide(color: colorlogin),
-                                borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                              ),
-                              labelStyle: TextStyle(color: textlogin),
                               labelText: "Email",
+                              labelStyle: TextStyle(color: textlogin),
                             ),
                           ),
                         ),
 
                         const SizedBox(height: 5.0),
 
+                        // PASSWORD
                         Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
                           child: TextFormField(
@@ -100,22 +100,19 @@ class _SignInAdminState extends State<SignInAdmin> {
                             cursorColor: Colors.black,
                             controller: _passwordController,
                             obscureText: _obscurePassword,
-                            keyboardType: TextInputType.visiblePassword,
                             decoration: InputDecoration(
                               prefixIcon: Icon(Icons.lock_outline_rounded, color: iconlogin),
                               border: OutlineInputBorder(
                                 borderSide: BorderSide(color: colorlogin),
                                 borderRadius: BorderRadius.all(Radius.circular(15.0)),
                               ),
-                              focusedBorder: OutlineInputBorder(
-                                borderSide: BorderSide(color: colorlogin),
-                                borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                              ),
                               labelText: "Kata Sandi",
                               labelStyle: TextStyle(color: textlogin),
                               suffixIcon: IconButton(
                                 icon: Icon(
-                                  _obscurePassword ? Icons.visibility_off_rounded : Icons.visibility_rounded,
+                                  _obscurePassword
+                                      ? Icons.visibility_off_rounded
+                                      : Icons.visibility_rounded,
                                   color: iconlogin,
                                 ),
                                 onPressed: () {
@@ -128,10 +125,13 @@ class _SignInAdminState extends State<SignInAdmin> {
                           ),
                         ),
 
+                        // Lupa Password
                         TextButton(
                           onPressed: () {
-                            Navigator.push(context,
-                                MaterialPageRoute(builder: (BuildContext context) => ResetPassword()));
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (context) => ResetPassword()),
+                            );
                           },
                           child: Align(
                             alignment: Alignment.centerRight,
@@ -139,6 +139,7 @@ class _SignInAdminState extends State<SignInAdmin> {
                           ),
                         ),
 
+                        // BUTTON MASUK
                         Container(
                           height: 45,
                           width: MediaQuery.of(context).size.width / 2.25,
@@ -152,10 +153,29 @@ class _SignInAdminState extends State<SignInAdmin> {
                               );
 
                               if (message!.contains('Sukses')) {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(builder: (context) => Mainmenu()),
-                                );
+                                User? user = FirebaseAuth.instance.currentUser;
+
+                                if (user != null) {
+                                  DocumentSnapshot snap = await FirebaseFirestore.instance
+                                      .collection("users")
+                                      .doc(user.uid)
+                                      .get();
+
+                                  String role = snap["Role"] ?? "";
+
+                                  if (role == "Admin") {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(builder: (context) => Mainmenu()),
+                                    );
+                                  } else {
+                                    FirebaseAuth.instance.signOut();
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(content: Text("Akses ditolak: hanya admin yang dapat login")),
+                                    );
+                                    return;
+                                  }
+                                }
                               }
 
                               ScaffoldMessenger.of(context).showSnackBar(
@@ -179,27 +199,25 @@ class _SignInAdminState extends State<SignInAdmin> {
 
                         const SizedBox(height: 10.0),
 
+                        // Sign Up
                         TextButton(
                           onPressed: () {
                             Navigator.push(
                               context,
-                              MaterialPageRoute(builder: (BuildContext context) => SignUpAdmin()),
+                              MaterialPageRoute(builder: (context) => SignUpAdmin()),
                             );
                           },
                           child: Text('Belum Memiliki Akun? Daftar', style: TextStyle(color: textlogin)),
                         ),
 
-                        // Tambahan Login Admin
+                        // Login User
                         TextButton(
                           onPressed: () {
                             Navigator.push(
                               context,
-                              MaterialPageRoute(builder: (BuildContext context) => SignIn()),
+                              MaterialPageRoute(builder: (context) => SignIn()),
                             );
                           },
-                          style: ButtonStyle(
-                            overlayColor: MaterialStateColor.resolveWith((states) => Colors.transparent),
-                          ),
                           child: Text('Login sebagai User', style: TextStyle(color: textlogin)),
                         ),
                       ],
