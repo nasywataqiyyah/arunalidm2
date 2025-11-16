@@ -1,6 +1,6 @@
+import 'package:arunaapp/admin/mainmenu.dart';
 import 'package:arunaapp/admin/sign_up.dart';
 import 'package:arunaapp/configure/constants.dart';
-import 'package:arunaapp/menu_user/main_menu.dart';
 import 'package:arunaapp/user/auth_service.dart';
 import 'package:arunaapp/user/reset_password.dart';
 import 'package:arunaapp/user/sign_in.dart';
@@ -154,7 +154,7 @@ class _SignInAdminState extends State<SignInAdmin> {
                               if (message!.contains('Sukses')) {
                                 Navigator.push(
                                   context,
-                                  MaterialPageRoute(builder: (context) => MainMenu()),
+                                  MaterialPageRoute(builder: (context) => Mainmenu()),
                                 );
                               }
 

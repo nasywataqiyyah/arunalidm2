@@ -1,11 +1,13 @@
 import 'package:arunaapp/admin/sign_in.dart';
 import 'package:arunaapp/configure/constants.dart';
-import 'package:arunaapp/menu_user/main_menu.dart';
+import 'package:arunaapp/menu_user/home/index.dart';
 import 'package:arunaapp/user/auth_service.dart';
 import 'package:arunaapp/user/reset_password.dart';
 import 'package:arunaapp/user/sign_up.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class SignIn extends StatefulWidget {
   const SignIn({super.key});
@@ -66,6 +68,7 @@ class _SignInState extends State<SignIn> {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[
+                        // EMAIL FIELD
                         Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
                           child: TextFormField(
@@ -90,7 +93,8 @@ class _SignInState extends State<SignIn> {
                             ),
                           ),
                         ),
-                        const SizedBox(height: 5.0),
+
+                        // PASSWORD FIELD
                         Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
                           child: TextFormField(
@@ -126,43 +130,24 @@ class _SignInState extends State<SignIn> {
                           ),
                         ),
 
+                        // LUPA PASSWORD
                         TextButton(
                           onPressed: () {
                             Navigator.push(context,
                                 MaterialPageRoute(builder: (BuildContext context) => ResetPassword()));
                           },
-                          style: ButtonStyle(
-                            overlayColor: MaterialStateColor.resolveWith((states) => Colors.transparent),
-                          ),
                           child: Align(
                             alignment: Alignment.centerRight,
                             child: Text('Lupa Kata Sandi', style: TextStyle(color: iconlogin)),
                           ),
                         ),
 
+                        // LOGIN BUTTON
                         Container(
                           height: 45,
                           width: MediaQuery.of(context).size.width / 2.25,
                           child: ElevatedButton(
-                            onPressed: () async {
-                              _saveCredentials();
-
-                              final message = await AuthService().login(
-                                email: _emailController.text,
-                                password: _passwordController.text,
-                              );
-
-                              if (message!.contains('Sukses')) {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(builder: (context) => MainMenu()),
-                                );
-                              }
-
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(content: Text(message)),
-                              );
-                            },
+                            onPressed: loginUser,
                             style: ButtonStyle(
                               shape: MaterialStateProperty.all(
                                 RoundedRectangleBorder(
@@ -180,6 +165,7 @@ class _SignInState extends State<SignIn> {
 
                         const SizedBox(height: 10.0),
 
+                        // SIGN UP
                         TextButton(
                           onPressed: () {
                             Navigator.push(
@@ -187,13 +173,10 @@ class _SignInState extends State<SignIn> {
                               MaterialPageRoute(builder: (BuildContext context) => SignUp()),
                             );
                           },
-                          style: ButtonStyle(
-                            overlayColor: MaterialStateColor.resolveWith((states) => Colors.transparent),
-                          ),
                           child: Text('Belum Memiliki Akun? Daftar', style: TextStyle(color: textlogin)),
                         ),
 
-                        // Tambahan Login Admin
+                        // LOGIN ADMIN
                         TextButton(
                           onPressed: () {
                             Navigator.push(
@@ -201,9 +184,6 @@ class _SignInState extends State<SignIn> {
                               MaterialPageRoute(builder: (BuildContext context) => SignInAdmin()),
                             );
                           },
-                          style: ButtonStyle(
-                            overlayColor: MaterialStateColor.resolveWith((states) => Colors.transparent),
-                          ),
                           child: Text('Login sebagai Admin', style: TextStyle(color: textlogin)),
                         ),
                       ],
@@ -215,6 +195,39 @@ class _SignInState extends State<SignIn> {
           ),
         ),
       ),
+    );
+  }
+
+  Future<void> loginUser() async {
+    _saveCredentials();
+
+    final message = await AuthService().login(
+      email: _emailController.text,
+      password: _passwordController.text,
+    );
+
+    if (message!.contains('Sukses')) {
+      User? user = FirebaseAuth.instance.currentUser;
+
+      if (user != null) {
+        DocumentSnapshot snap = await FirebaseFirestore.instance
+            .collection("users")
+            .doc(user.uid)
+            .get();
+
+        String firstName = snap["firstName"] ?? "User";
+
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => HomePage(firstName: firstName),
+          ),
+        );
+      }
+    }
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(message)),
     );
   }
 
