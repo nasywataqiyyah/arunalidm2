@@ -10,6 +10,8 @@ class Mainmenu extends StatefulWidget {
 class _MainmenuState extends State<Mainmenu> {
   @override
   Widget build(BuildContext context) {
-    return const Placeholder();
+    return Scaffold(
+      body: Text("data"),
+    );
   }
 }
