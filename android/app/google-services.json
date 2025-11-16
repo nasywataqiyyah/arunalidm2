@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "549383909930",
+    "project_id": "arunaapp-8f11c",
+    "storage_bucket": "arunaapp-8f11c.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:549383909930:android:0cefe34109e9dce1710953",
+        "android_client_info": {
+          "package_name": "com.example.arunaapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCBPet8wtzJo46B2sNnmDXAR7zzl8e4lJE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
