@@ -274,7 +274,7 @@ class _SignUpAdminState extends State<SignUpAdmin> {
             .collection("users")
             .doc(currentUser.uid)
             .set({
-          'Nama Admin': _usernameController.text.trim(),
+          'User Name': _usernameController.text.trim(),
           'Sekolah': _schoolController.text.trim(),
           'Email': _emailController.text.trim(),
           'User UID': currentUser.uid,

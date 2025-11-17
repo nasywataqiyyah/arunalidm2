@@ -1,3 +1,4 @@
+import 'package:arunaapp/admin/dashboard.dart';
 import 'package:flutter/material.dart';
 
 class Mainmenu extends StatefulWidget {
@@ -45,7 +46,10 @@ class _MainmenuState extends State<Mainmenu> {
                     icon: Icons.dashboard,
                     title: "Dashboard",
                     onTap: () {
-                      // TODO: halaman dashboard
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (_) => const DashboardPage()),
+                      );
                     },
                   ),
                   menuCard(
