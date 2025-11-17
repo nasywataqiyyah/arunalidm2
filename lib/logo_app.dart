@@ -46,7 +46,7 @@ class _LogoAppState extends State<LogoApp> {
               style: TextStyle(
                 fontSize: 28,
                 letterSpacing: 2,
-                color: Colors.black87,
+                color: Colors.blue,
               ),
             ),
           ],
