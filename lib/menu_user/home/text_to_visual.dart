@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 
 class TextVisualPage extends StatefulWidget {
   const TextVisualPage({super.key});
@@ -11,48 +10,69 @@ class TextVisualPage extends StatefulWidget {
 class _TextVisualPageState extends State<TextVisualPage> {
   final TextEditingController _controller = TextEditingController();
 
-  Future<void> _saveToFirebase() async {
-    try {
-      await FirebaseFirestore.instance.collection('text_inputs').add({
-        'text': _controller.text.trim(),
-        'createdAt': FieldValue.serverTimestamp(),
-      });
+  // daftar semua gambar yang ada di asset
+  final Map<String, String> imageMap = {
+    "anggur": "assets/images/anggur.png",
+    "anjing": "assets/images/anjing.png",
+    "apel": "assets/images/apel.png",
+    "ayam": "assets/images/ayam.png",
+    "bawang": "assets/images/bawang.png",
+    "bayam": "assets/images/bayam.png",
+    "benda": "assets/images/benda.png",
+    "brokoli": "assets/images/brokoli.png",
+    "buah": "assets/images/buah.png",
+    "buku": "assets/images/buku.png",
+    "burung": "assets/images/burung.png",
+    "cabai": "assets/images/cabai.png",
+    "gajah": "assets/images/gajah.png",
+    "gelas": "assets/images/gelas.png",
+    "ikan": "assets/images/ikan.png",
+    "jam": "assets/images/jam.png",
+    "jeruk": "assets/images/jeruk.png",
+    "kol": "assets/images/kol.png",
+    "kucing": "assets/images/kucing.png",
+    "kursi": "assets/images/kursi.png",
+    "mangga": "assets/images/mangga.png",
+    "meja": "assets/images/meja.png",
+    "mentimun": "assets/images/mentimun.png",
+    "pensil": "assets/images/pensil.png",
+    "pepaya": "assets/images/pepaya.png",
+    "pir": "assets/images/pir.png",
+    "piring": "assets/images/piring.png",
+    "pisang": "assets/images/pisang.png",
+    "sapi": "assets/images/sapi.png",
+    "sayur": "assets/images/sayur.png",
+    "semangka": "assets/images/semangka.png",
+    "singa": "assets/images/singa.png",
+    "tas": "assets/images/tas.png",
+    "terong": "assets/images/terong.png",
+    "tomat": "assets/images/tomat.png",
+    "wortel": "assets/images/wortel.png",
+    "notfound": "assets/images/notfound.png",
+  };
 
+  String? selectedImage; // gambar yang ditampilkan
+
+  void showImageFromText() {
+    String input = _controller.text.trim().toLowerCase();
+
+    if (input.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('Teks berhasil disimpan!'),
-          backgroundColor: Colors.green,
-        ),
-      );
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Gagal menyimpan: $e'),
-          backgroundColor: Colors.red,
-        ),
-      );
-    }
-  }
-
-  void _goToNextPage() async {
-    if (_controller.text.trim().isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Masukkan teks terlebih dahulu!'),
+          content: Text("Masukkan teks terlebih dahulu!"),
           backgroundColor: Colors.redAccent,
         ),
       );
       return;
     }
 
-    await _saveToFirebase();
-
-    // Navigator.push(
-    //   context,
-    //   MaterialPageRoute(
-    //     builder: (context) => TextVisual2Page(text: _controller.text.trim()),
-    //   ),
-    // );
+    setState(() {
+      if (imageMap.containsKey(input)) {
+        selectedImage = imageMap[input];
+      } else {
+        selectedImage = imageMap["notfound"];
+      }
+    });
   }
 
   @override
@@ -75,7 +95,7 @@ class _TextVisualPageState extends State<TextVisualPage> {
           ),
         ),
         title: const Text(
-          'Text to Visual',
+          "Text to Visual",
           style: TextStyle(
             fontWeight: FontWeight.bold,
             color: Colors.white,
@@ -102,9 +122,9 @@ class _TextVisualPageState extends State<TextVisualPage> {
             children: [
               const SizedBox(height: 30),
 
-              // ========== TITLE ==========
               const Text(
-                'Masukkan Teks untuk Visualisasi',
+                "Masukkan nama gambar\ncontoh: kucing, apel, pisang…",
+                textAlign: TextAlign.center,
                 style: TextStyle(
                   fontStyle: FontStyle.italic,
                   fontSize: 18,
@@ -114,7 +134,7 @@ class _TextVisualPageState extends State<TextVisualPage> {
 
               const SizedBox(height: 25),
 
-              // ========== TEXT FIELD CARD ==========
+              // TEXT FIELD
               Container(
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
@@ -139,13 +159,13 @@ class _TextVisualPageState extends State<TextVisualPage> {
                 ),
               ),
 
-              const SizedBox(height: 35),
+              const SizedBox(height: 30),
 
-              // ========== BUTTON ENTER ==========
+              // BUTTON LANJUTKAN
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
-                  onPressed: _goToNextPage,
+                  onPressed: showImageFromText,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.white,
                     foregroundColor: Colors.blue.shade700,
@@ -154,11 +174,9 @@ class _TextVisualPageState extends State<TextVisualPage> {
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(14),
                     ),
-                    elevation: 6,
-                    shadowColor: Colors.black.withOpacity(0.3),
                   ),
                   child: const Text(
-                    "Lanjutkan",
+                    "Lihat Gambar",
                     style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
@@ -169,23 +187,26 @@ class _TextVisualPageState extends State<TextVisualPage> {
               ),
 
               const SizedBox(height: 40),
+
+              // GAMBAR
+              if (selectedImage != null)
+                Container(
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(18),
+                  ),
+                  child: Image.asset(
+                    selectedImage!,
+                    width: 200,
+                    height: 200,
+                    fit: BoxFit.contain,
+                  ),
+                ),
+
+              const SizedBox(height: 30),
             ],
           ),
-        ),
-      ),
-
-      // ========== BOTTOM NAV BAR ==========
-      bottomNavigationBar: Container(
-        padding: const EdgeInsets.symmetric(vertical: 10),
-        color: const Color(0xFF6EC5D2),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: const [
-            Icon(Icons.home, color: Colors.white, size: 32),
-            Icon(Icons.help_outline, color: Colors.white, size: 32),
-            Icon(Icons.group, color: Colors.white, size: 32),
-            Icon(Icons.settings, color: Colors.white, size: 32),
-          ],
         ),
       ),
     );

@@ -72,4 +72,5 @@ class DefaultFirebaseOptions {
     storageBucket: 'arunaapp-8f11c.firebasestorage.app',
     iosBundleId: 'com.example.arunaapp',
   );
+
 }
