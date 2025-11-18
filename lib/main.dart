@@ -7,6 +7,12 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:arunaapp/firebase_options.dart';
+<<<<<<< HEAD
+=======
+
+// ⚠️ Tambahkan ini
+import 'package:intl/date_symbol_data_local.dart';
+>>>>>>> origin/nasywa
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -15,7 +21,12 @@ void main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
+<<<<<<< HEAD
   // ❌ Tidak pakai AppCheck sama sekali
+=======
+  // ⚠️ Tambahkan ini agar DateFormat('id_ID') tidak error
+  await initializeDateFormatting('id_ID', null);
+>>>>>>> origin/nasywa
 
   runApp(await Arunaapp.initialize());
 }
@@ -41,7 +52,10 @@ class _ArunaappState extends State<Arunaapp> {
   void initState() {
     super.initState();
 
+<<<<<<< HEAD
     // Auto logout hanya untuk Mobile
+=======
+>>>>>>> origin/nasywa
     if (!kIsWeb) {
       _startTimeout();
     }
